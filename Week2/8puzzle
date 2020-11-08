@@ -1,82 +1,79 @@
-def dfs(src,target,limit,visited_states):
-    
-    if src==target:
-        return True
-    
-    if limit<=0:
-        return False
-    
+def bfs(src,target):
+    # Use brute force technique
+    visited_states=[]
     visited_states.append(src)
-    adj = possible_moves(src,visited_states)
-    
-    for move in adj:
-        if dfs(move,target,limit-1,visited_states):
+    arr = [src]
+    c = 0
+    while arr:
+        c += 1                                                                            
+        if arr[0] == target:                             
             return True
+        arr += possible_moves(arr[0],visited_states)                    
+        arr.pop(0)                                                                    
     return False
 
 def possible_moves(state,visited_states): 
+    # Find index of empty spot and assign it to b
     
-    ind = state.index(-1)  
+    b = state.index(-1)  
     
+    #'d' for down, 'u' for up, 'r' for right, 'l' for left - directions array
     d = []
-                                        
-    if ind+3 in range(9):
+                                    
+    #Add all possible direction into directions array - Hint using if statements
+    
+    if b+3 in range(9):
         d.append('d')
-    if ind-3 in range(9):
+    if b-3 in range(9):
         d.append('u')
-    if ind not in [0,3,6]:
+    if b not in [0,3,6]:
         d.append('l')
-    if ind not in [2,5,8]:
+    if b not in [2,5,8]:
         d.append('r')
     
+    # If direction is possible then add state to move
     pos_moves = []
-
+    
+    # for all possible directions find the state if that move is played
+    ### Jump to gen function to generate all possible moves in the given directions
     for move in d:
-        pos_moves.append(gen(state,move,ind))
+        pos_moves.append(gen(state,move,b))
         
+    # return all possible moves only if the move not in visited_states
     return [move for move in pos_moves if move not in visited_states]
 
-def gen(state, m, b): 
-
+def gen(state, direction, blank_spot):
     temp = state.copy()                            
-        
-    if m=='d':
-        a = temp[b+3]
-        temp[b+3]=temp[b]
-        temp[b]=a
-    elif m=='u':
-        a = temp[b-3]
-        temp[b-3]=temp[b]
-        temp[b]=a
-    elif m=='l':
-        a = temp[b-1]
-        temp[b-1]=temp[b]
-        temp[b]=a
-    elif m=='r':
-        a = temp[b+1]
-        temp[b+1]=temp[b]
-        temp[b]=a
     
+    # if move is to slide empty spot to the left and so on
+    
+    if direction=='d':
+        a = temp[blank_spot+3]
+        temp[blank_spot+3]=temp[blank_spot]
+        temp[blank_spot]=a
+    elif direction=='u':
+        a = temp[blank_spot-3]
+        temp[blank_spot-3]=temp[blank_spot]
+        temp[blank_spot]=a
+    elif direction=='l':
+        a = temp[blank_spot-1]
+        temp[blank_spot-1]=temp[blank_spot]
+        temp[blank_spot]=a
+    elif direction=='r':
+        a = temp[blank_spot+1]
+        temp[blank_spot+1]=temp[blank_spot]
+        temp[blank_spot]=a
+    
+    # return new state with tested move to later check if "src == target"
     return temp
-
-def iddfs(src,target,depth):
-    visited_states = []
-    for i in range(1, depth+1):
-        if dfs(src, target, i, visited_states): 
-            return True
-    return False 
-
 
 #Test 1
 src = [1,2,3,-1,4,5,6,7,8]
-target = [1,2,3,4,5,6,-1,7,8]           
-depth = 4
+target = [1,2,3,4,5,-1,6,7,8]       
+print(bfs(src, target))
 
-print(iddfs(src, target, depth)) # Minimum depth should be 2
 
 # Test 2
-src1 = [1,2,3,-1,4,5,6,7,8] 
-target1=[1,2,3,6,4,5,-1,7,8]
-
-depth1 = 1
-print(iddfs(src1, target1, depth1)) # Minimum depth is 1
+src = [1,2,3,-1,4,5,6,7,8] 
+target=[1,2,3,6,4,5,-1,7,8]
+print(bfs(src, target))
